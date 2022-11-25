@@ -1,0 +1,14 @@
+---
+- name: Check MySQL daemon
+  service:
+    name: "{{ mysql_daemon }}"
+    state: started
+  when: (inventory_hostname in groups['db'])
+#  loop: "{{ groups['db'] }}"
+
+- name: Check Nginx daemon
+  service:
+    name: "{{ nginx_daemon }}"
+    state: started
+  when: (inventory_hostname in groups['web'])
+#  loop: "{{ groups['web'] }}"

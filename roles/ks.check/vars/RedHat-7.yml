@@ -1,0 +1,6 @@
+---
+# RedHat-7-specific variables for ks.check
+
+__mysql_daemon: mariadb
+__nginx_daemon: nginx
+

@@ -1,0 +1,55 @@
+---
+- name: Install docker and docker api
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - docker
+    - python-docker-py
+
+- name: Create proxy config for docker
+  file: 
+    name: /etc/systemd/system/docker.service.d
+    state: directory
+  when: docker_use_proxy == true
+
+- name: Create folders for docker
+  file: 
+    name: "{{item}}"
+    state: directory
+  with_items:
+    - /etc/nginx
+    - /var/www 
+
+- name: Upload conf files for nginx
+  copy: 
+    src: /etc/ansible/roles/geerlingguy.nginx/config/
+    dest: /etc/nginx
+
+- name: Insert proxy strings
+  blockinfile:
+    path: /etc/systemd/system/docker.service.d/http-proxy.conf
+    block: |
+      [Service]
+      Environment="HTTP_PROXY=http://{{docker_proxy_host}}:{{docker_proxy_port}}"
+      Environment="HTTPS_PROXY=http://{{docker_proxy_host}}:{{docker_proxy_port}}"
+      Environment="NO_PROXY=localhost,127.0.0.1"
+    create: true
+  when: docker_use_proxy == true
+
+- name: Reload daemons and start docker
+  systemd:
+    daemon_reload: yes
+    name: docker
+    state: restarted
+
+
+- name: Deploy docker nginx
+  community.docker.docker_container:
+    name: "{{nginx_container_name}}"
+    image: nginx
+    volumes:
+      - /etc/nginx:/etc/nginx
+      - /var/www:/var/www
+    ports:
+     - "{{nginx_host_port | default('80')}}:{{nginx_container_port | default('80')}}"

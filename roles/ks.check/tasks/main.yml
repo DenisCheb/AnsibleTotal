@@ -1,0 +1,16 @@
+---
+# tasks file for ks.check
+
+# Включение переменных.
+- include_tasks: variables.yml
+
+# Задания 1.1. и 1.2. - Проверка доступности порта хостов
+#- include_tasks: Check-port.yml
+
+# Задания 1.1. и 1.2. - Проверка статуса юнитов хостов
+- include_tasks: Check-daemon.yml
+
+# Задание 1.3 - Получение страницы
+- include_tasks: get_page.yml
+
+#- include_tasks: 

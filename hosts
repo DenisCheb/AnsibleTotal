@@ -1,0 +1,4 @@
+[db]
+web1 ansible_ssh_user=root ansible_ssh_pass=
+[web]
+web1 ansible_ssh_user=root ansible_ssh_pass=

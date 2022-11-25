@@ -1,0 +1,9 @@
+---
+# defaults file for ks.check
+
+mysql_port: "3306"
+nginx_http_port: "80"
+nginx_https_port: "443"
+
+nginx_vhosts: 
+  - {listen: "80", server_name: "10.38.60.96", template: "health.j2", location: "health.txt", filename: "health.conf", state: "present"}

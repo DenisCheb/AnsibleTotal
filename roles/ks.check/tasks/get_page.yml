@@ -1,0 +1,19 @@
+---
+
+
+- name: Get checksum
+  stat: 
+    path: "/etc/ansible/roles/geerlingguy.nginx/templates/{{item.location}}"
+    checksum_algorithm: sha256
+  register: file_stat
+  with_items: "{{nginx_vhosts}}"
+  delegate_to: localhost
+
+- name: Get page
+  get_url:
+    url: http://{{item.server_name}}/{{item.location}}
+    dest: /tmp/{{item.location}}
+    checksum: "sha256:{{file_stat.results[0].stat.checksum}}"
+  with_items: "{{nginx_vhosts}}"
+  delegate_to: localhost
+
